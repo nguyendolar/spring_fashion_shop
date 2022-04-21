@@ -79,6 +79,16 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public List<Integer> listID() {
+        return productRepository.listID();
+    }
+
+    @Override
+    public  List<Product> listNotSell() {
+        return productRepository.listNotSell();
+    }
+
+    @Override
     public List<Product> findProductByNameLike(String name) {
         return productRepository.findProductByNameLike(name);
     }

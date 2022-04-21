@@ -19,7 +19,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.security.Principal;
-import java.util.Locale;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Controller
@@ -40,6 +41,30 @@ public class AdminProductController {
         ModelAndView mv = new ModelAndView("admin/product");
         mv.addObject("products" ,productService.getAll());
         mv.addObject("categorys" ,categoryService.listCon());
+        String userName = principal.getName();
+        mv.addObject("userName",userName);
+        return mv;
+    }
+
+    @GetMapping(value = "/seller")
+    public ModelAndView seller(Principal principal){
+        ModelAndView mv = new ModelAndView("admin/product-seller");
+        List<Integer> listId = productService.listID();
+        List<Product> listPro = new ArrayList<Product>();
+        for (Integer id : listId) {
+            Product product = productService.getProductById(id);
+            listPro.add(product);
+        }
+        mv.addObject("products" ,listPro);
+        String userName = principal.getName();
+        mv.addObject("userName",userName);
+        return mv;
+    }
+
+    @GetMapping(value = "/notsell")
+    public ModelAndView notsell(Principal principal){
+        ModelAndView mv = new ModelAndView("admin/product-notsell");
+        mv.addObject("products" ,productService.listNotSell());
         String userName = principal.getName();
         mv.addObject("userName",userName);
         return mv;

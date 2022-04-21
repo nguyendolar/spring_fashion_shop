@@ -24,4 +24,6 @@ public interface ProductService {
     Page<Product> findProductByNameLike(String name,Pageable pageable);
     List<Product> findProductByNameLike(String name);
     int updatepro(int quantity, int id);
+    List<Integer> listID();
+    List<Product> listNotSell();
 }
