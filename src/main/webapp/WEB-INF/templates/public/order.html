@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="li">
+
+<head >
+  <title>Website bán hàng</title>
+  <meta name="description"
+        content="Mua sách online hay, giá tốt nhất, combo sách hot bán chạy, giảm giá cực khủng cùng với những ưu đãi như miễn phí giao hàng, quà tặng miễn phí, đổi trả nhanh chóng. Đa dạng sản phẩm, đáp ứng mọi nhu cầu.">
+  <meta name="keywords" content="nhà sách online, mua sách hay, sách hot, sách bán chạy, sách giảm giá nhiều">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+  <link rel="stylesheet" th:href="@{/public/css/gio-hang.css}">
+  <script type="text/javascript" th:src="@{/public/js/main.js}"></script>
+  <link rel="stylesheet" th:href="@{/public/fontawesome_free_5.13.0/css/all.css}">
+
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap"
+        rel="stylesheet">
+
+  <link rel="stylesheet" type="text/css" th:href="@{/public/slick/slick.css}" />
+  <link rel="stylesheet" type="text/css" th:href="@{/public/slick/slick-theme.css}"/>
+  <script type="text/javascript" th:src="@{/public/slick/slick.min.js}"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  <script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+  <script type="text/javascript"
+          src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/jquery.validate.min.js"></script>
+  <link rel="canonical" href="http://dealbook.xyz/">
+  <meta name="google-site-verification" content="urDZLDaX8wQZ_-x8ztGIyHqwUQh2KRHvH9FhfoGtiEw" />
+  <link rel="apple-touch-icon" sizes="180x180" th:href="@{/public/favicon_io/apple-touch-icon.png}">
+  <link rel="icon" type="image/png" sizes="32x32" th:href="@{/public/favicon_io/favicon-32x32.png}">
+  <link rel="icon" type="image/png" sizes="16x16" th:href="@{/public/favicon_io/favicon-16x16.png}">
+  <link rel="manifest" th:href="@{/public/favicon_io/site.webmanifest}">
+  <style>img[alt="www.000webhost.com"]{display: none;}</style>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <script>
+    function changeNumber(id){
+      var nameId = 'numberCart'+id;
+      var giamoiId = "giamoi"+id;
+      var giacuId = "giacu"+id;
+      const quantity = document.getElementById(nameId).value;
+      const giamoi = document.getElementById(giamoiId);
+      const giacu = document.getElementById(giacuId);
+      $.ajax({
+        url: "/public/cart/update-number",
+        type:"post",
+        data:{
+          productId:id,
+          quantity:quantity
+        },
+        success: function(data){
+          giamoi.innerHTML = data.giaMoi;
+          giacu.innerHTML = data.giaCu;
+          const tamtinh = document.getElementById("tamtinh");
+          const tongtien = document.getElementById("tongtien");
+          tamtinh.innerHTML = data.total;
+          tongtien.innerHTML = data.total + 30000;
+        }
+      });
+    }
+    function login(){
+      var password = $('#password1').val();
+      var email = $('#email1').val();
+      if (password == ''  || email == '' ){
+        swal({
+          title: 'Cần điền đầy đủ thông tin!',
+          /* text: 'Redirecting...', */
+          icon: 'error',
+          timer: 3000,
+          buttons: true,
+          type: 'error'
+        })
+      } else {
+
+        var formData = new FormData();
+        formData.append('password', password);
+        formData.append('email', email);
+        $.ajax(
+                {
+                  type: 'POST',
+                  url: '/public/user/login/',
+                  contentType: false,
+                  processData: false,
+                  data: formData,
+                  success: function (data) {
+                    if(data == "false_user"){
+                      swal({
+                        title: 'Thông tin tài khoản không chính xác!',
+                        /* text: 'Redirecting...', */
+                        icon: 'error',
+                        timer: 3000,
+                        buttons: true,
+                        type: 'error'
+                      })
+                    }else if(data == "true"){
+                      swal({
+                        title: 'Đăng nhập thành công !',
+                        /* text: 'Redirecting...', */
+                        icon: 'success',
+                        timer: 3000,
+                        buttons: true,
+                        type: 'success'
+                      })
+                      setInterval(function(){
+                        location.reload()
+                      }, 2000);
+                    } else {
+                      swal({
+                        title: 'Tài khoản chưa xác thực vui lòng check mail!',
+                        /* text: 'Redirecting...', */
+                        icon: 'error',
+                        timer: 3000,
+                        buttons: true,
+                        type: 'error'
+                      })
+                    }
+                  },
+                  error: function (err) {
+                    alert(err);
+                  }
+                }
+        )
+      }
+
+    }
+    function register(){
+      var password = $('#password').val();
+      var rePassword = $('#rePassword').val();
+      var email = $('#email').val();
+      var fullName = $('#fullName').val();
+      var phoneNumber = $('#phoneNumber').val();
+      if (password == '' || rePassword == '' || email == '' || fullName == '' || phoneNumber == ''){
+        swal({
+          title: 'Cần điền đầy đủ thông tin!',
+          /* text: 'Redirecting...', */
+          icon: 'error',
+          timer: 3000,
+          buttons: true,
+          type: 'error'
+        })
+      } else {
+        if (password !== rePassword){
+          swal({
+            title: 'Hai mật khẩu không trùng khớp!',
+            /* text: 'Redirecting...', */
+            icon: 'error',
+            timer: 3000,
+            buttons: true,
+            type: 'error'
+          })
+        } else {
+          var formData = new FormData();
+          formData.append('password', password);
+          formData.append('email', email);
+          formData.append('fullName', fullName);
+          formData.append('phoneNumber', phoneNumber);
+          formData.append('rePassword', rePassword);
+          $.ajax(
+                  {
+                    type: 'POST',
+                    url: '/public/user/register/',
+                    contentType: false,
+                    processData: false,
+                    data: formData,
+                    success: function (data) {
+                      if(data == "exist"){
+                        swal({
+                          title: 'Email đã tồn tại!',
+                          /* text: 'Redirecting...', */
+                          icon: 'error',
+                          timer: 3000,
+                          buttons: true,
+                          type: 'error'
+                        })
+                      }else if(data == "true"){
+                        swal({
+                          title: 'Đăng kí thành công!',
+                          /* text: 'Redirecting...', */
+                          icon: 'success',
+                          timer: 5000,
+                          buttons: true,
+                          type: 'success'
+                        })
+                        $('#err').val("");
+                      }
+                    },
+                    error: function (err) {
+                      alert(err);
+                    }
+                  }
+          )
+        }
+      }
+
+    }
+  </script>
+</head>
+
+<body>
+<!--Start of Tawk.to Script-->
+
+<!--End of Tawk.to Script-->
+<!-- code cho nut like share facebook  -->
+<div id="fb-root"></div>
+<script async defer crossorigin="anonymous"
+        src="https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v6.0"></script>
+
+<!-- header -->
+<nav th:replace="public/fragments :: html_nav" class="navbar navbar-expand-md bg-white navbar-light">
+
+</nav>
+
+
+<!-- form dang ky khi click vao button tren header-->
+<div th:replace="public/fragments :: html_register" class="modal fade mt-5" id="formdangky" data-backdrop="static" tabindex="-1" aria-labelledby="dangky_tieude"
+     aria-hidden="true">
+
+</div>
+
+<!-- form dang nhap khi click vao button tren header-->
+<div th:replace="public/fragments :: html_login" class="modal fade mt-5" id="formdangnhap" data-backdrop="static" tabindex="-1"
+     aria-labelledby="dangnhap_tieude" aria-hidden="true">
+
+</div>
+<div th:if="${user_login}" >
+  <script>
+    swal({
+      title: 'Bạn cần phải đăng nhập',
+      /* text: 'Redirecting...', */
+      icon: 'error',
+      timer: 3000,
+      buttons: true,
+      type: 'error'
+    })
+  </script>
+</div>
+<div th:if="${success}" >
+  <script>
+    swal({
+      title: 'Thành công',
+      /* text: 'Redirecting...', */
+      icon: 'success',
+      timer: 3000,
+      buttons: true,
+      type: 'success'
+    })
+  </script>
+</div>
+<!-- thanh "danh muc sach" đã được ẩn bên trong + hotline + ho tro truc tuyen -->
+<section  class="duoinavbar">
+  <div class="container text-white">
+    <div class="row justify">
+      <div class="col-lg-3 col-md-5">
+        <div class="categoryheader">
+          <div class="noidungheader text-white">
+            <i class="fa fa-bars"></i>
+            <span class="text-uppercase font-weight-bold ml-1">Danh mục sản phẩm</span>
+          </div>
+          <!-- CATEGORIES -->
+          <div class="categorycontent">
+            <ul>
+              <th:block th:each="category,index : ${categories}">
+                <li th:if="${category.parentId == 0}"> <a th:href="'/public/product/'+${category.id}" th:text="${category.name}"></a><i class="fa fa-chevron-right float-right"></i>
+                  <ul>
+                    <li class="liheader"><a href="#" class="header text-uppercase" th:text="${category.name}"></a></li>
+                    <div class="content trai">
+                      <th:block th:each="category1,index1 : ${categories}">
+                        <li th:if="${category.id == category1.parentId}"><a th:text="${category1.name}" th:href="'/public/product/'+${category1.id}"></a></li>
+                        <th:block/>
+                    </div>
+                  </ul>
+                </li>
+                <th:block/>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-5 ml-auto contact d-none d-md-block">
+        <div class="benphai float-right">
+          <div class="hotline">
+            <i class="fa fa-phone"></i>
+            <span>Hotline:<b>1900 1999</b> </span>
+          </div>
+          <i class="fas fa-comments-dollar"></i>
+          <a href="#">Hỗ trợ trực tuyến </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- breadcrumb  -->
+<section class="breadcrumbbar">
+  <div class="container">
+    <ol class="breadcrumb mb-0 p-0 bg-transparent">
+      <li class="breadcrumb-item"><a href="/public/home">Trang chủ</a></li>
+      <li class="breadcrumb-item active"><a href="/public/user/order" >Lịch sử đặt hàng</a></li>
+    </ol>
+  </div>
+</section>
+<section class="content my-3 mb-5">
+  <div class="container">
+    <table class="table" style="margin-bottom: 100px">
+      <thead class="thead-light">
+      <tr>
+        <th scope="col">Mã đơn hàng</th>
+        <th scope="col">Ngày đặt hàng</th>
+        <th scope="col">Tổng tiền</th>
+        <th scope="col">Ghi chú</th>
+        <th scope="col">Trạng thái</th>
+        <th scope="col">Thao tác</th>
+      </tr>
+      </thead>
+      <tbody>
+      <th:block th:each="order,index : ${list}">
+        <tr>
+          <td th:text="${order.id}"></td>
+          <td th:text="${order.orderDate}">Otto</td>
+          <td th:text="${#numbers.formatCurrency(order.amount)}"></td>
+          <td th:text="${order.description}" ></td>
+          <td th:if="${order.status == 0}">Đã hủy</td>
+          <td th:if="${order.status == 1}">Đang xử lý</td>
+          <td th:if="${order.status == 2}">Đang giao hàng</td>
+          <td th:if="${order.status == 3}">Đã giao hàng</td>
+          <td>
+            <a style="width: 100px" th:href="'/public/user/order/detail/'+ ${order.id}" class="btn btn-warning">
+              Chi tiết
+            </a>
+            <a th:if="${order.status == 1}" style="width: 100px" th:href="'order/cancel/'+ ${order.id}" class="btn btn-danger">
+              Hủy đơn
+            </a>
+          </td>
+        </tr>
+      </th:block>
+
+      </tbody>
+    </table>
+  </div>
+  <!-- het container  -->
+</section>
+<!-- het khoi content  -->
+
+<!-- thanh cac dich vu :mien phi giao hang, qua tang mien phi ........ -->
+
+<!-- het .abovefooter  -->
+
+<!-- footer  -->
+<footer th:replace="public/fragments :: footer">
+
+</footer>
+
+<!-- nut cuon len dau trang -->
+<div class="fixed-bottom">
+  <div class="btn btn-warning float-right rounded-circle nutcuonlen" id="backtotop" href="#" style="background:#CF111A;"><i
+          class="fa fa-chevron-up text-white"></i></div>
+</div>
+
+
+</body>
+
+</html>

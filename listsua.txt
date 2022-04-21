@@ -1,0 +1,9 @@
+thêm vào giỏ hàng bỏ nút tăng giảm 
+khi nhập quá số lượng- thông báo 
+format giỏ hàng (done)
+sửa lỗi phân trang bên người dùng(done)
+thêm biểu đồ top 10 bán chạy nhất
+top 10 bán ko chạy
+bắt lỗi ko nhập tìm kiếm (done)
+admin bắt lỗi những chỗ nhập số lượng ko cho nhập chữ (done)
+
