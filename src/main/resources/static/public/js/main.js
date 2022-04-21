@@ -325,15 +325,28 @@ $(function () {
                 },
                 success: function(data){
                     var div = document.getElementById('numberCart');
-                    div.innerHTML = data;
-                    swal({
-                        title: 'Thêm giỏ hàng thành công',
-                        /* text: 'Redirecting...', */
-                        icon: 'success',
-                        timer: 3000,
-                        buttons: true,
-                        type: 'success'
-                    })
+                    if(data == 0){
+                        swal({
+                            title: 'Số lượng sản phẩm trong kho không đủ',
+                            /* text: 'Redirecting...', */
+                            icon: 'error',
+                            timer: 3000,
+                            buttons: true,
+                            type: 'error'
+                        })
+                    }else{
+                        div.innerHTML = data;
+                        swal({
+                            title: 'Thêm giỏ hàng thành công',
+                            /* text: 'Redirecting...', */
+                            icon: 'success',
+                            timer: 3000,
+                            buttons: true,
+                            type: 'success'
+                        })
+                    }
+
+
                    /* var row = document.getElementById("toast");
                     row.innerHTML = data;
                     $(document).ready(function(){

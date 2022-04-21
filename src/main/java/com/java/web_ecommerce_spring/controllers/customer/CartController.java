@@ -85,12 +85,14 @@ public class CartController {
         int total = 0;
         HttpSession session = request.getSession();
         String productId = request.getParameter("productId");
+        Product product = productService.getProductById(Integer.parseInt(productId));
         quantity = Integer.parseInt(request.getParameter("quantity"));
+        if (quantity > product.getQuantity()){
+            return  0;
+        }
         OrderItem orderItem = new OrderItem();
         if (productId != null){
-            Product product = productService.getProductById(Integer.parseInt(productId));
             if (session.getAttribute("order") == null) {
-
                 List<ItemModel> listItem = new ArrayList<>();
                 ItemModel item = new ItemModel(product,quantity);
                 listItem.add(item);
